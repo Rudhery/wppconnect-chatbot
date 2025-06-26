@@ -117,19 +117,25 @@ export class ChatBot {
     }
   }
 
-  // Processar mensagens recebidas (MIGRADO COMPLETO do original)
+  // Processar mensagens recebidas (OTIMIZADO para performance)
   private async handleMessage(message: any): Promise<void> {
+    const startTime = Date.now();
+
     try {
-      // Debug: mostrar estrutura do objeto message
-      console.log('📋 Estrutura da mensagem WppConnect:', {
-        from: message.from,
-        body: message.body,
-        fromMe: message.fromMe,
-        timestamp: message.timestamp,
-        sender: message.sender,
-        notifyName: message.notifyName,
-        type: message.type,
-      });
+      // Debug simplificado para computadores fracos
+      if (!this.config.performance?.enablePerformanceMode) {
+        console.log('📋 Estrutura da mensagem WppConnect:', {
+          from: message.from,
+          body: message.body,
+          fromMe: message.fromMe,
+          timestamp: message.timestamp,
+          sender: message.sender,
+          notifyName: message.notifyName,
+          type: message.type,
+        });
+      } else {
+        console.log(`📱 Mensagem de: ${message.from?.replace('@c.us', '')}`);
+      }
 
       // 1. Primeiro verificar se é mensagem de sincronização (do numeroNext)
       await this.handleMessageSync(message);
@@ -220,8 +226,20 @@ export class ChatBot {
       );
 
       console.log(`✅ Sequência de boas-vindas enviada para ${numeroContato}`);
+
+      // Log de performance
+      const processTime = Date.now() - startTime;
+      if (this.config.performance?.enablePerformanceMode) {
+        console.log(`⚡ Processamento: ${processTime}ms`);
+      }
     } catch (error) {
       console.error('❌ Erro ao processar mensagem:', error);
+
+      // Log de performance mesmo em erro
+      const processTime = Date.now() - startTime;
+      if (processTime > 5000) {
+        console.warn(`⚠️ Processamento lento: ${processTime}ms`);
+      }
     }
   }
 
@@ -523,20 +541,32 @@ export class ChatBot {
     });
   }
 
-  // Tarefas periódicas (migrado do original)
+  // Tarefas periódicas (otimizado para performance)
   private startPeriodicTasks(): void {
-    // Limpar contatos a cada 4 horas (migrado do original)
-    setInterval(() => {
-      console.log('Limpando estes contatos:', this.contatos);
-      this.contatos = {};
-      console.log('Array de contatos foi limpo');
-    }, 14400000); // 4 horas
+    const cleanupInterval = this.config.performance?.contactCleanupInterval || 14400000;
+    const healthInterval = this.config.performance?.healthCheckInterval || 10000;
 
-    // Verificar saúde do cliente a cada 10 segundos (migrado do original)
+    console.log(`🚀 Configurando intervalos otimizados:`);
+    console.log(`   - Limpeza de contatos: ${cleanupInterval / 1000 / 60}min`);
+    console.log(`   - Verificação de saúde: ${healthInterval / 1000}s`);
+
+    // Limpar contatos (intervalo ajustado para performance)
+    setInterval(() => {
+      const contatosCount = Object.keys(this.contatos).length;
+      if (contatosCount > 0) {
+        console.log(`🧹 Limpando ${contatosCount} contatos da memória`);
+        this.contatos = {};
+        console.log('✅ Array de contatos foi limpo');
+      }
+    }, cleanupInterval);
+
+    // Verificar saúde do cliente (intervalo otimizado)
     setInterval(async () => {
-      console.log('Verificando a saúde do cliente...');
+      if (!this.config.performance?.enablePerformanceMode) {
+        console.log('🔍 Verificando a saúde do cliente...');
+      }
       await this.checkClientHealth();
-    }, 10000);
+    }, healthInterval);
   }
 
   // Função de delay

@@ -34,6 +34,31 @@ export interface BotConfig {
   caminhoImagens: string;
 
   autoResponses?: AutoResponse[];
+
+  // Configurações de performance
+  performance?: PerformanceConfig;
+}
+
+// ===========================
+// CONFIGURAÇÕES DE PERFORMANCE
+// ===========================
+
+/**
+ * Configurações otimizadas para performance
+ */
+export interface PerformanceConfig {
+  /** É um computador de baixo desempenho */
+  isLowEndMachine: boolean;
+  /** Intervalo de verificação de saúde (ms) */
+  healthCheckInterval: number;
+  /** Intervalo de limpeza de contatos (ms) */
+  contactCleanupInterval: number;
+  /** Intervalo de atualização da interface web (ms) */
+  webUIUpdateInterval: number;
+  /** Tamanho máximo da fila de mensagens */
+  maxMessageQueueSize: number;
+  /** Ativar modo de performance */
+  enablePerformanceMode: boolean;
 }
 
 // ===========================

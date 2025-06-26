@@ -14,6 +14,12 @@ declare global {
   }
 }
 
+// Detectar se o computador é "fraco" baseado na RAM
+function isLowEndMachine(): boolean {
+  const totalMemory = os.totalmem() / (1024 * 1024 * 1024); // GB
+  return totalMemory < 4; // Menos de 4GB = computador fraco
+}
+
 // Função para detectar o Chrome automaticamente (compatível com PKG)
 function getChromePath(): string | undefined {
   const platform = os.platform();
@@ -84,6 +90,15 @@ function getWorkingDirectory(): string {
   return process.cwd();
 }
 
+// 🚀 CONFIGURAÇÕES OTIMIZADAS PARA PERFORMANCE
+const isLowEnd = isLowEndMachine();
+console.log(
+  `💻 Computador detectado: ${isLowEnd ? 'BÁSICO' : 'NORMAL'} (${(
+    os.totalmem() /
+    (1024 * 1024 * 1024)
+  ).toFixed(1)}GB RAM)`,
+);
+
 export const botConfig: BotConfig = {
   sessionName: 'meu-bot-session',
 
@@ -92,7 +107,7 @@ export const botConfig: BotConfig = {
   numeroNext: '554435286207@c.us',
   msg_automatico: true, // ⚠️ COLOQUE true para ativar auto-resposta
   logInFile: true,
-  hideNavegador: false,
+  hideNavegador: isLowEnd, // 🚀 Esconder navegador em PCs fracos
   useChrome: true,
   pathChrome: getChromePath(), // 🚀 Detecção automática compatível com PKG
 
@@ -101,10 +116,20 @@ export const botConfig: BotConfig = {
   estabelecimento: 'Boa Pizza Pizzaria LTDA!',
   mensagemBoasVindas: 'Seja bem-vindo à',
   mensagemCardapio: 'Faça seu pedido pelo nosso site exclusivo: ',
-  delayPadrao: 10000, // 10 segundos entre envios
+  delayPadrao: isLowEnd ? 15000 : 10000, // 🚀 Delay maior em PCs fracos
 
   // 🚀 Caminho dinâmico compatível com PKG
   caminhoImagens: path.join(getWorkingDirectory(), 'images'),
+
+  // 🚀 CONFIGURAÇÕES DE PERFORMANCE (novas)
+  performance: {
+    isLowEndMachine: isLowEnd,
+    healthCheckInterval: isLowEnd ? 30000 : 10000, // 30s vs 10s
+    contactCleanupInterval: isLowEnd ? 21600000 : 14400000, // 6h vs 4h
+    webUIUpdateInterval: isLowEnd ? 60000 : 30000, // 1min vs 30s
+    maxMessageQueueSize: isLowEnd ? 10 : 50,
+    enablePerformanceMode: isLowEnd,
+  },
 
   // Números específicos que recebem respostas automáticas (do arquivo original)
 

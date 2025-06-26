@@ -3,7 +3,6 @@ import { ChatBot } from './chatbot';
 import { botConfig } from './config';
 import { logger, setupGlobalLogging } from './logger';
 import { ApiResponse, PromotionRequest, MessageRequest } from './types';
-import { setupWebUI } from './web-ui';
 
 export class WhatsAppAPI {
   private app: express.Application;
@@ -16,9 +15,6 @@ export class WhatsAppAPI {
     this.setupMiddleware();
     this.setupRoutes();
 
-    // Configurar interface web
-    setupWebUI(this.app);
-
     // Configurar logging global se ativado
     setupGlobalLogging(botConfig.logInFile);
   }
@@ -26,9 +22,11 @@ export class WhatsAppAPI {
   private setupMiddleware(): void {
     this.app.use(express.json());
 
-    // Middleware para logs
+    // Middleware para logs (otimizado para performance)
     this.app.use((req, res, next) => {
-      console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
+      if (!botConfig.performance?.enablePerformanceMode) {
+        console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
+      }
       next();
     });
   }
