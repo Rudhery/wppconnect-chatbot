@@ -75,6 +75,7 @@ function showStartupBanner(): void {
   console.log('🍕 Boa Pizza - Sistema de Automação');
   console.log('🚀 ========================================');
   console.log('');
+
 }
 
 // ===========================

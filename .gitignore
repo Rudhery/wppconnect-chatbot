@@ -137,3 +137,4 @@ dist
 .tokens/
 
 /prod/tokens/*
+/tokens/*
